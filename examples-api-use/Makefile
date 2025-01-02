@@ -38,7 +38,7 @@ http : http.o
 	$(CXX) $< -o $@ $(LDFLAGS)
 
 http.o: http.cc
-	$(CXX) -I$(RGB_INCDIR) -I/home/rejus/cpp-httplib -c -o $@ $<
+	$(CXX) -I$(RGB_INCDIR) -I../../cpp-httplib -c -o $@ $<
 
 image-example.o : image-example.cc
 	$(CXX) -I$(RGB_INCDIR) $(CXXFLAGS) $(MAGICK_CXXFLAGS) -c -o $@ $<

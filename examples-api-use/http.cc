@@ -74,6 +74,23 @@ int main(int argc, char *argv[]) {
 
   svr.Post("/draw", [canvas](const Request& req, Response& res) {
     canvas->SetPixel(0, 0, 255, 255, 255);
+    std::size_t bodySize = res.body.size();
+    int canvasSize = canvas->height() * canvas->width();
+    if (bodySize != (canvasSize * 3)) {
+      res.set_content("size not ok", "text/plain");
+      return;
+    }
+    canvas->Clear();
+    for (int i = 0; i < canvasSize; i++) {
+      int pos = i * 3;
+      auto& r = res.body.at(pos);
+      auto& g = res.body.at(pos + 1);
+      auto& b = res.body.at(pos + 2);
+
+      int x = i / canvas->width();
+      int y = i % canvas->width();
+      canvas->SetPixel(x, y, r, g, b);
+    }
     res.set_content("ok", "text/plain");
   });
 
