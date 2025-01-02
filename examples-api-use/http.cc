@@ -69,12 +69,11 @@ int main(int argc, char *argv[])
 
   svr.Post("/draw", [canvas](const Request &req, Response &res)
            {
-    canvas->SetPixel(0, 0, 255, 255, 255);
-    std::size_t bodySize = res.body.size();
-    auto values = split(res.body, ",");
+   canvas->SetPixel(canvas->width(), canvas->width(), 255,255,255);
+    auto values = split(req.body, ",");
     int canvasSize = canvas->height() * canvas->width();
     if (values.size() != (canvasSize * 3)) {
-      res.set_content("size not ok", "text/plain");
+      res.set_content("size not ok, got: " + std::to_string(values.size()) +"expected:" + std::to_string(canvasSize * 3), "text/plain");
       return;
     }
     canvas->Clear();
@@ -84,16 +83,19 @@ int main(int argc, char *argv[])
       int g = std::stoi(values.at(pos + 1));
       int b = std::stoi(values.at(pos + 2));
 
-      int x = i / canvas->width();
-      int y = i % canvas->width();
+      int x = i / canvas->height();
+      int y = i % canvas->height();
       canvas->SetPixel(x, y, r, g, b);
     }
+   canvas->SetPixel(canvas->width(), canvas->width(), 0,255,0);
     res.set_content("ok", "text/plain"); });
 
   svr.Get("/stop", [&](const Request &req, Response &res)
           { svr.stop(); });
 
   int port = 1233;
+
+  canvas->SetPixel(0, 0, 255, 255, 255);
   svr.listen("localhost", port);
 
   std::cout << "Listening on port: " << port << std::endl;
